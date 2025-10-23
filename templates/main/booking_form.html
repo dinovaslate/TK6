@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h4 mb-3">Booking for {{ venue.name }}</h2>
+                <p class="text-muted">Fill in the schedule and optional add-ons, then proceed to payment.</p>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Date</label>
+                            {{ form.date.as_widget(attrs={"class": "form-control"}) }}
+                            {% if form.date.errors %}
+                                <div class="text-danger small">{{ form.date.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Start Time</label>
+                            {{ form.start_time.as_widget(attrs={"class": "form-control"}) }}
+                            {% if form.start_time.errors %}
+                                <div class="text-danger small">{{ form.start_time.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Duration (hours)</label>
+                            {{ form.duration_hours.as_widget(attrs={"class": "form-control"}) }}
+                            {% if form.duration_hours.errors %}
+                                <div class="text-danger small">{{ form.duration_hours.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Notes</label>
+                            {{ form.notes.as_widget(attrs={"class": "form-control"}) }}
+                        </div>
+                        {% if form.addons.field.queryset.exists() %}
+                        <div class="col-12">
+                            <label class="form-label">Add-ons</label>
+                            {% for checkbox in form.addons %}
+                            <div class="form-check">
+                                {{ checkbox.tag }}
+                                <label class="form-check-label" for="{{ checkbox.id_for_label }}">{{ checkbox.choice_label }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-success mt-4">Continue to Payment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

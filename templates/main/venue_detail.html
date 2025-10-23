@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            {% if venue.image_url %}
+                <img src="{{ venue.image_url }}" class="card-img-top" alt="{{ venue.name }}">
+            {% endif %}
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h3">{{ venue.name }}</h1>
+                        <p class="text-muted mb-1">{{ venue.city }} &middot; {{ venue.category.name }}</p>
+                        <p class="mb-3">{{ venue.address }}</p>
+                    </div>
+                    <div class="text-end">
+                        <div class="fs-4">Rp{{ venue.price_per_hour|floatformat:0 }} <small class="text-muted">/hour</small></div>
+                        <form method="post" action="{% url 'wishlist_toggle' venue.id %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'venue_detail' venue.id %}">
+                            <button type="submit" class="btn {% if is_wishlisted %}btn-danger{% else %}btn-outline-danger{% endif %} mt-2">
+                                {% if is_wishlisted %}Unlove{% else %}Love{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <hr>
+                <h5>Description</h5>
+                <p>{{ venue.description }}</p>
+                {% if venue.facilities %}
+                    <h5>Facilities</h5>
+                    <p>{{ venue.facilities }}</p>
+                {% endif %}
+            </div>
+        </div>
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h4 class="h5">Reviews</h4>
+                <form method="post" action="{% url 'add_review' venue.id %}" class="mb-3">
+                    {% csrf_token %}
+                    {{ review_form.rating }}
+                    {{ review_form.comment }}
+                    <button type="submit" class="btn btn-primary mt-2">Add Review</button>
+                </form>
+                {% for review in venue.reviews.all %}
+                    <div class="border-top pt-3 mt-3">
+                        <div class="d-flex justify-content-between">
+                            <strong>{{ review.user.username }}</strong>
+                            <span class="badge bg-warning text-dark">{{ review.rating }}/5</span>
+                        </div>
+                        <p class="mb-1">{{ review.comment }}</p>
+                        <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">No reviews yet. Be the first to share your experience.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="h5">Book this venue</h4>
+                <p>Pick a schedule and confirm your booking.</p>
+                <a href="{% url 'booking' venue.id %}" class="btn btn-success w-100">Booking Here</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
