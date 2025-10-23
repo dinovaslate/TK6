@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="mb-3">Welcome Back</h2>
+                <p class="text-muted">Sign in to explore premium sport venues.</p>
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">{{ form.non_field_errors|striptags }}</div>
+                    {% endif %}
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small">{{ field.errors|striptags }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+                </form>
+                <div class="mt-3 text-center">
+                    <span class="text-muted">New to RagaSpace?</span>
+                    <a href="{% url 'register' %}">Create an account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
