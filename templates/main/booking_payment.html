@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h4 mb-3">Payment for {{ booking.venue.name }}</h2>
+                <p class="text-muted">Review your booking details and complete payment to confirm.</p>
+                <div class="border rounded p-3 mb-4">
+                    <h5 class="mb-2">Your Picks</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li><strong>Date:</strong> {{ booking.date|date:"M d, Y" }}</li>
+                        <li><strong>Start:</strong> {{ booking.start_time }}</li>
+                        <li><strong>Duration:</strong> {{ booking.duration_hours }} hour(s)</li>
+                        {% if booking.addons.exists() %}
+                            {% for addon in booking.addons.all %}
+                                <li><strong>Add-on:</strong> {{ addon.name }} (Rp{{ addon.price|floatformat:0 }})</li>
+                            {% endfor %}
+                        {% endif %}
+                        {% if booking.notes %}
+                            <li><strong>Notes:</strong> {{ booking.notes }}</li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 text-center">
+                            <div class="text-muted">Subtotal</div>
+                            <div class="fs-5">Rp{{ subtotal|floatformat:0 }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 text-center">
+                            <div class="text-muted">Down Payment</div>
+                            <div class="fs-5">Rp{{ deposit|floatformat:0 }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="border rounded p-3 text-center bg-light">
+                            <div class="text-muted">Grand Total</div>
+                            <div class="fs-5">Rp{{ grand_total|floatformat:0 }}</div>
+                        </div>
+                    </div>
+                </div>
+                <form method="post">
+                    {% csrf_token %}
+                    <h5>Select Payment Method</h5>
+                    {% for radio in form.payment_method %}
+                        <div class="form-check">
+                            {{ radio.tag }}
+                            <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                        </div>
+                    {% endfor %}
+                    <button type="submit" class="btn btn-primary mt-3">Confirm Payment</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
